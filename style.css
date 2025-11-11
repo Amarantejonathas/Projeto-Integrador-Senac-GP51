@@ -1,0 +1,171 @@
+
+body {
+  /* Gradiente atualizado */
+  background-image: linear-gradient(
+    to bottom,
+    #106ebe,
+    #008cd2,
+    #00a8dc,
+    #00c3dd,
+    #00ddd9,
+    #00decf,
+    #00dec2,
+    #00deb5,
+    #00c7ab,
+    #00b19f,
+    #019b92,
+    #178582
+  );
+  /* Faz o gradiente preencher toda a tela */
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  background-size: cover;
+
+  /* Remove margens padrão do body */
+  margin: 0;
+  min-height: 100vh;
+
+  /* (Opcional) Define uma fonte e cor base para o texto */
+  font-family: 'Segoe UI', Arial, sans-serif;
+  color: white;
+}
+
+h1, h2, h5 {
+  color: #041c3f;
+}
+
+.card {
+  border-radius: 1rem;
+}
+ .mb-4 {
+    color:rgb(242, 245, 241);
+ }
+ .para {
+    color:beige;
+ }
+/* Define o tamanho do logo */
+.logo {
+  width: 120px;           /* Largura do logo */
+  height: auto;           /* Mantém proporção original */
+  filter: brightness(2.1) contrast(2.3);
+  
+  /* Espaçamento e alinhamento */
+  margin-right: 10px;
+  vertical-align: middle;
+
+  /* Efeitos visuais */
+  border-radius: 10px;    /* Arredonda cantos */
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3); /* Sombra suave */
+  transition: transform 0.3s ease;          /* Animação suave ao passar o mouse */
+  opacity:100%;
+  background-image:;
+}
+
+/* Efeito hover (passar o mouse) */
+.logo:hover {
+  transform: scale(1.1);  /* Dá um leve zoom */
+}
+.mario {
+    width: 80px;
+}
+ 
+.btn-custom {
+  align-items: center;
+  background-image: linear-gradient(144deg, #af40ff, #5b42f3 50%, #00ddeb);
+  border: 0;
+  border-radius: 10px;
+  box-shadow: rgba(91, 66, 243, 0.3) 0 15px 30px -5px;
+  box-sizing: border-box;
+  color: #ffffff;
+  display: flex;
+  font-size: 25px;
+  justify-content: center;
+  line-height: 1em;
+  min-width: 160px;
+  padding: 3px;
+  text-decoration: none;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.btn-custom:active,
+.btn-custom:hover {
+  outline: 0;
+}
+
+.btn-custom span {
+  background-color: rgb(64, 30, 104);
+  padding: 16px 28px;
+  border-radius: 8px;
+  width: 100%;
+  height: 100%;
+  transition: 300ms;
+}
+
+.btn-custom:hover span {
+  background: none;
+}
+
+.btn-custom:active {
+  transform: scale(0.95);
+}
+
+/* Alinhamento e espaçamento */
+.d-flex {
+  flex-wrap: wrap;
+  gap: 15px;
+  justify-content: center;
+}
+.tecnico{
+      display: flex;          /* Faz a imagem se comportar como um bloco */
+  margin-right: auto;       /* Empurra a imagem para a direita */
+  margin-right: 0;
+  width: 500px;            /* Ajusta a largura */
+  height: 450px;            /* Mantém a proporção original */
+  margin-top: 50px;
+  border-radius: 3%;
+}
+.imagem-container {
+  display: flex;
+  justify-content: flex-end; /* envia a imagem para a esquerda */
+}
+
+.eletricista {
+  width: 500px;
+  height: 450px;
+  margin-top:50px;
+  border-radius: 3%;
+  margin-left: 500px;
+  margin-right: 50px;
+
+}
+
+.imagem-container-2{
+display: flex;
+  justify-content: center; /* centraliza na horizontal */
+  align-items: flex-end;   /* joga a imagem para baixo */
+  height: 100vh;           /* ocupa a altura total da tela */
+}
+.jardineiro{
+  display: flex;
+  justify-content: flex-start;
+  width: 500px;
+  border-radius: 3%;
+  height: auto;
+  top: 1480px;
+  position: absolute;
+  left: 200px;
+  
+
+}
+.rodape{
+  font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+  position:relative; /* posição do texto*/
+  margin: -60px auto 0; 
+  margin-left: 39%;
+  height: auto;
+}

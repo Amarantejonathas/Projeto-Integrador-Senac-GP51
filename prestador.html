@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ConectaServ - Prestador</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<nav class="navbar navbar-dark bg-primary">
+  <div class="container">
+    <a class="navbar-brand" href="index.html">ConectaServ - Você será parte na solução!</a>
+  </div>
+</nav>
+
+<div class="container mt-5">
+  <h2 class="text-center mb-4">Portal do Prestador</h2>
+
+  <div id="loginPrestador" class="text-center">
+    <h4>Tem cadastro?</h4>
+    <button class="btn btn-primary m-2" onclick="fazerLogin('prestador')">Sim, fazer login</button>
+    <button class="btn btn-secondary m-2" onclick="mostrarCadastro('prestador')">Não, quero me cadastrar</button>
+  </div>
+
+  <div id="cadastroPrestador" class="d-none">
+    <h5>Cadastro do Prestador</h5>
+    <input type="text" class="form-control mb-2" placeholder="Nome completo">
+    <input type="email" class="form-control mb-2" placeholder="E-mail">
+    <input type="text" class="form-control mb-2" placeholder="Profissão">
+    <button class="btn btn-success" onclick="notificarCliente()">Cadastrar e adicionar trabalhos</button>
+  </div>
+
+  <div id="notificacaoSection" class="d-none text-center">
+    <h5>Você recebeu uma notificação de cliente interessado!</h5>
+    <button class="btn btn-info" onclick="abrirChat()">Abrir chat</button>
+  </div>
+
+  <div id="chatSection" class="d-none">
+    <h5>Chat com o cliente</h5>
+    <textarea class="form-control mb-2" placeholder="Digite uma resposta..."></textarea>
+    <button class="btn btn-primary" onclick="clienteContrata()">Enviar</button>
+  </div>
+
+  <div id="pagamentoSection" class="d-none text-center">
+    <h5>O cliente realizou o pagamento adiantado!</h5>
+    <button class="btn btn-success" onclick="finalizarAtendimento()">Concluir serviço</button>
+  </div>
+
+  <div id="avaliacaoPrestador" class="d-none text-center">
+    <h5>Serviço concluído e pago!</h5>
+    <p>Você recebeu sua avaliação. Continue prestando ótimos serviços!</p>
+  </div>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
