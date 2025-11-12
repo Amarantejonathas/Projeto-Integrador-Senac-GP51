@@ -8,59 +8,79 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-<nav class="navbar navbar-dark bg-primary">
-  <div class="container">
-    <a class="navbar-brand" href="index.html">ConectaServ- Te ajudamos com a solução!</a>
-    <img src="logo.png" alt="logo ConectaServ" class="logo">
-  </div>
-</nav>
+  <nav class="navbar navbar-dark bg-primary">
+    <div class="container">
+      <a class="navbar-brand" href="index.html">ConectaServ - Te ajudamos com a solução!</a>
+      <img src="logo.png" alt="logo ConectaServ" class="logo">
+    </div>
+  </nav>
 
-<div class="container mt-5">
-  <h2 class="text-center mb-4">Portal do Cliente</h2>
+  <div class="container mt-5">
+    <h2 class="text-center mb-4">Portal do Cliente</h2>
 
-  <div id="loginSection" class="text-center">
-    <h4>Tem cadastro?</h4>
-    <button class="btn btn-primary m-2" onclick="fazerLogin('cliente')">Sim, fazer login</button>
-    <button class="btn btn-secondary m-2" onclick="mostrarCadastro('cliente')">Não, quero me cadastrar</button>
-  </div>
+    <!-- Tela inicial -->
+    <div id="loginSection" class="text-center">
+      <h4>Tem cadastro?</h4>
+      <button class="btn btn-primary m-2" onclick="mostrarLogin()">Sim, fazer login</button>
+      <button class="btn btn-secondary m-2" onclick="mostrarCadastro()">Não, quero me cadastrar</button>
+    </div>
 
-  <div id="cadastroSection" class="d-none">
-    <h5>Cadastro do Cliente</h5>
-    <input type="text" class="form-control mb-2" placeholder="Nome completo">
-    <input type="email" class="form-control mb-2" placeholder="E-mail">
-    <input type="password" class="form-control mb-2" placeholder="Senha">
-    <button class="btn btn-success" onclick="pesquisarProfissionais()">Cadastrar</button>
-  </div>
+    <!-- Formulário de login -->
+    <div id="formLoginSection" class="d-none text-center">
+      <h5>Login do Cliente</h5>
+      <input type="email" class="form-control mb-2" id="loginEmail" placeholder="E-mail" required>
+      <input type="password" class="form-control mb-2" id="loginSenha" placeholder="Senha" required>
+      <button class="btn btn-success" id="btnLogin">Entrar</button>
+      <button class="btn btn-link" onclick="voltarInicio()">Voltar</button>
 
-  <div id="pesquisaSection" class="d-none">
-    <h5>Pesquise por um profissional</h5>
-    <input type="text" class="form-control mb-3" placeholder="Ex: eletricista" id="busca">
-    <button class="btn btn-primary" onclick="mostrarProfissionais()">Pesquisar</button>
-  </div>
+      <!-- Local onde o alerta será exibido -->
+      <div id="alertContainer" class="mt-3"></div>
+    </div>
 
-  <div id="resultadoSection" class="d-none">
-    <h5>Profissionais encontrados</h5>
-    <div class="card mb-3">
-      <div class="card-body">
-        <h6>João Silva - Eletricista</h6>
-        <p>⭐⭐⭐⭐☆ (45 avaliações)</p>
-        <button class="btn btn-outline-success" onclick="confirmarContratacao()">Contratar</button>
+    <!-- Cadastro -->
+    <div id="cadastroSection" class="d-none">
+      <h5>Cadastro do Cliente</h5>
+      <input type="text" class="form-control mb-2" placeholder="Nome completo" id="cadNome">
+      <input type="email" class="form-control mb-2" placeholder="E-mail" id="cadEmail">
+      <input type="password" class="form-control mb-2" placeholder="Senha" id="cadSenha">
+      <button class="btn btn-success" id="btnCadastrar">Cadastrar</button>
+      <button class="btn btn-link" onclick="voltarInicio()">Voltar</button>
+    </div>
+
+    <!-- Pesquisa -->
+    <div id="pesquisaSection" class="d-none">
+      <h4 id="boasVindas" class="text-center text-primary mb-4"></h4>
+      <h5>Pesquise por um profissional</h5>
+      <input type="text" class="form-control mb-3" placeholder="Ex: eletricista" id="busca">
+      <button class="btn btn-primary" id="btnPesquisar">Pesquisar</button>
+    </div>
+
+    <!-- Resultados -->
+    <div id="resultadoSection" class="d-none">
+      <h5>Profissionais encontrados</h5>
+      <div class="card mb-3">
+        <div class="card-body">
+          <h6>João Silva - Eletricista</h6>
+          <p>⭐⭐⭐⭐☆ (45 avaliações)</p>
+          <button class="btn btn-outline-success" id="btnContratar">Contratar</button>
+        </div>
       </div>
+    </div>
+
+    <!-- Confirmação -->
+    <div id="confirmacaoSection" class="d-none text-center">
+      <h5>Confirme o pagamento para prosseguir</h5>
+      <button class="btn btn-success" id="btnPagar">Pagar e confirmar</button>
+    </div>
+
+    <!-- Avaliação -->
+    <div id="avaliacaoSection" class="d-none text-center">
+      <h5>Serviço concluído!</h5>
+      <p>Avalie o profissional:</p>
+      <button class="btn btn-warning" onclick="alert('Obrigado pela avaliação!')">⭐ ⭐ ⭐ ⭐ ⭐</button>
     </div>
   </div>
 
-  <div id="confirmacaoSection" class="d-none text-center">
-    <h5>Confirme o pagamento para prosseguir</h5>
-    <button class="btn btn-success" onclick="finalizarServico()">Pagar e confirmar</button>
-  </div>
-
-  <div id="avaliacaoSection" class="d-none text-center">
-    <h5>Serviço concluído!</h5>
-    <p>Avalie o profissional:</p>
-    <button class="btn btn-warning" onclick="alert('Obrigado pela avaliação!')">⭐ ⭐ ⭐ ⭐ ⭐</button>
-  </div>
-</div>
-
-<script src="script.js"></script>
+  <script src="cliente.js"></script>
 </body>
 </html>

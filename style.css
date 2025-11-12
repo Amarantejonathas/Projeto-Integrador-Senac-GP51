@@ -68,6 +68,10 @@ h1, h2, h5 {
 .mario {
     width: 80px;
 }
+.cliente{
+  width: 80px;
+
+}
  
 .btn-custom {
   align-items: center;
@@ -129,43 +133,42 @@ h1, h2, h5 {
   margin-top: 50px;
   border-radius: 3%;
 }
-.imagem-container {
-  display: flex;
-  justify-content: flex-end; /* envia a imagem para a esquerda */
+
+/* Texto dentro da caixa */
+.text-box h3 {
+  color: #f2f3f5;
+  font-weight: bold;
+  margin-bottom: 10px;
 }
 
-.eletricista {
-  width: 500px;
-  height: 450px;
-  margin-top:50px;
-  border-radius: 3%;
-  margin-left: 500px;
-  margin-right: 50px;
-
+.text-box p {
+  color: #f0eff3;
+  font-family: 'Times New Roman', Times, serif;
+  font-size: 1rem;
+  line-height: 1.5;
+  font-size: 150%;
+}
+.col-md-8{
+  color: #f0eff3;
+  font-family: 'Times New Roman', Times, serif;
+  font-size: 130%;
+  text-transform: capitalize;
+ 
 }
 
-.imagem-container-2{
-display: flex;
-  justify-content: center; /* centraliza na horizontal */
-  align-items: flex-end;   /* joga a imagem para baixo */
-  height: 100vh;           /* ocupa a altura total da tela */
-}
-.jardineiro{
-  display: flex;
-  justify-content: flex-start;
-  width: 500px;
-  border-radius: 3%;
-  height: auto;
-  top: 1480px;
-  position: absolute;
-  left: 200px;
-  
 
+/* Ajuste para telas pequenas */
+@media (max-width: 768px) {
+  .text-box {
+    max-width: 100%;
+    margin: 10px auto;
+  }
 }
 .rodape{
   font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
   position:relative; /* posição do texto*/
-  margin: -60px auto 0; 
-  margin-left: 39%;
+  margin: 50px auto 0; 
+  margin-left:40%;
   height: auto;
 }
+
