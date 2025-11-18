@@ -47,38 +47,66 @@
       <button class="btn btn-link" onclick="voltarInicio()">Voltar</button>
     </div>
 
-    <!--Container Imagens-->
+   
+
+    <!-- ÁREA APÓS LOGIN DO CLIENTE -->
+    <div id="pesquisaSection" class="d-none">
+      <h3 id="boasVindas" class="text-primary"></h3>
+
+      <h5>Pesquisar profissionais</h5>
+      <input type="text" id="campoBusca" class="form-control mb-3" placeholder="Ex: Eletricista, encanador...">
+      <button class="btn btn-primary mb-4" onclick="pesquisarProfissionais()">Pesquisar</button>
+
+      <div id="listaPrestadores" class="row gy-3"></div>
+    </div>
+
+    <!-- CHAT -->
+    <div id="chatSection" class="d-none">
+      <h4 id="chatCom"></h4>
+      <div id="chatMensagens" class="border p-3 mb-3" style="height:250px; overflow-y:auto; background:#f7f7f7;"></div>
+
+      <textarea id="msgCliente" class="form-control mb-2" placeholder="Digite sua mensagem..."></textarea>
+      <button class="btn btn-success" onclick="enviarMensagem()">Enviar</button>
+      <button class="btn btn-secondary mt-2" onclick="fecharChat()">Voltar</button>
+    </div>
+
+  </div>
+   <!--Container Imagens-->
     <div class="container">
       <div class="row">
       <div class="col-sm-4">
+        <section class="session-1">
+          <h2>Qual solução você mais deseja?</h2>
+        </section>
           <img src="img/homesafe.jpg" class="img-home" alt="">
-        <p>A paz que você precisa, nossos profissionais proporcionam.</p>
+        <p>A paz que você deseja, nossos profissionais proporcionam.</p>
       </div>
     </div>
     <div class="imagem-direita-container">
     <img src="img/peace.webp" class="imagem-direita">
+    <div class="col-sm-4">
+      <th>
+        <thead>
+          <h2>Somos a solução que voce precisa! </h2>
+        </thead>
+        <br>
+        <td>-Atitude resolutiva</td>
+        <br>
+        <td >-Facilidade</td>
+        <br>
+        <td>-Competência</td>
+        <br>
+        <td>-Segurança</td>
+        <br>
+        <td>-Garantia</td>
+        <br>
+        <td>-Profissionais qualificados</td>
+        <br>
+        <td>-Flexibilidade de agendamentos</td>
+      </th>
+    </div>
 </div>
 
-
-    <!-- Pesquisa -->
-    <div id="pesquisaSection" class="d-none">
-      <h4 id="boasVindas" class="text-center text-primary mb-4"></h4>
-      <h5>Pesquise por um profissional</h5>
-      <input type="text" class="form-control mb-3" placeholder="Ex: eletricista" id="busca">
-      <button class="btn btn-primary" id="btnPesquisar">Pesquisar</button>
-    </div>
-
-    <!-- Resultados -->
-    <div id="resultadoSection" class="d-none">
-      <h5>Profissionais encontrados</h5>
-      <div class="card mb-3">
-        <div class="card-body">
-          <h6>João Silva - Eletricista</h6>
-          <p>⭐⭐⭐⭐☆ (45 avaliações)</p>
-          <button class="btn btn-outline-success" id="btnContratar">Contratar</button>
-        </div>
-      </div>
-    </div>
 
     <!-- Confirmação -->
     <div id="confirmacaoSection" class="d-none text-center">
@@ -95,5 +123,9 @@
   </div>
 
   <script src="cliente.js"></script>
+
 </body>
+<footer class="rodape">
+  <p>ConectaServ -Todos os direitos reservados 2025</p>
+</footer>
 </html>

@@ -1,81 +1,152 @@
-// Mostrar/ocultar seções
+// ----------------------
+// EXIBIR ALERTA BOOTSTRAP
+// ----------------------
+function showAlert(msg, type = "danger") {
+  document.getElementById("alertContainer").innerHTML = `
+    <div class="alert alert-${type} alert-dismissible fade show" role="alert">
+      ${msg}
+      <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+  `;
+}
+
+// ----------------------
+// NAVEGAÇÃO DE TELAS
+// ----------------------
 function mostrarLogin() {
-  document.getElementById('loginSection').classList.add('d-none');
-  document.getElementById('formLoginSection').classList.remove('d-none');
+  loginSection.classList.add("d-none");
+  formLoginSection.classList.remove("d-none");
 }
 
 function mostrarCadastro() {
-  document.getElementById('loginSection').classList.add('d-none');
-  document.getElementById('cadastroSection').classList.remove('d-none');
+  loginSection.classList.add("d-none");
+  cadastroSection.classList.remove("d-none");
 }
 
 function voltarInicio() {
-  document.querySelectorAll('#formLoginSection, #cadastroSection').forEach(el => el.classList.add('d-none'));
-  document.getElementById('loginSection').classList.remove('d-none');
+  formLoginSection.classList.add("d-none");
+  cadastroSection.classList.add("d-none");
+  loginSection.classList.remove("d-none");
 }
 
-// Função para mostrar alerta do Bootstrap
-function mostrarAlerta(mensagem, tipo = "danger") {
-  const alertContainer = document.getElementById("alertContainer");
-  alertContainer.innerHTML = `
-    <div class="alert alert-${tipo} alert-dismissible fade show" role="alert">
-      ${mensagem}
-      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-    </div>
-  `;
-  // Fecha automaticamente após 3 segundos
-  setTimeout(() => {
-    const alerta = bootstrap.Alert.getOrCreateInstance(alertContainer.querySelector(".alert"));
-    alerta.close();
-  }, 3000);
+// ----------------------
+// CADASTRO DO CLIENTE
+// ----------------------
+btnCadastrar.onclick = function () {
+  const nome = cadNome.value.trim();
+  const email = cadEmail.value.trim();
+  const senha = cadSenha.value.trim();
+
+  if (!nome || !email || !senha) {
+    showAlert("Preencha todos os campos!");
+    return;
+  }
+
+  localStorage.setItem("clienteDados", JSON.stringify({ nome, email, senha }));
+
+  showAlert("Cadastro realizado com sucesso!", "success");
+
+  setTimeout(() => voltarInicio(), 1200);
+};
+
+// ----------------------
+// LOGIN DO CLIENTE
+// ----------------------
+btnLogin.onclick = function () {
+  const email = loginEmail.value.trim();
+  const senha = loginSenha.value.trim();
+
+  const dados = JSON.parse(localStorage.getItem("clienteDados"));
+
+  if (!dados || dados.email !== email || dados.senha !== senha) {
+    showAlert("E-mail ou senha incorretos!");
+    return;
+  }
+
+  // Login OK
+  formLoginSection.classList.add("d-none");
+  pesquisaSection.classList.remove("d-none");
+
+  boasVindas.innerHTML = `Bem-vindo, ${dados.nome}!`;
+};
+
+// ----------------------
+// PESQUISA DE PRESTADORES
+// ----------------------
+function pesquisarProfissionais() {
+  const busca = campoBusca.value.toLowerCase();
+  const container = document.getElementById("listaPrestadores");
+
+  container.innerHTML = ""; // limpa
+
+  const prestador = JSON.parse(localStorage.getItem("prestadorDados"));
+  if (!prestador) return;
+
+  // Verifica se corresponde à busca
+  if (
+    prestador.nome.toLowerCase().includes(busca) ||
+    prestador.profissao.toLowerCase().includes(busca) ||
+    prestador.descricao.toLowerCase().includes(busca)
+  ) {
+    container.innerHTML = `
+      <div class="col-md-4">
+        <div class="card p-2">
+          <h5>${prestador.nome}</h5>
+          <p><strong>${prestador.profissao}</strong></p>
+          <p>${prestador.descricao}</p>
+
+          <div class="row">
+            ${prestador.fotos
+              .map((f) => `<div class="col-6"><img src="${f}" class="img-fluid rounded mb-2"></div>`)
+              .join("")}
+          </div>
+
+          <button class="btn btn-success" onclick="abrirChat('${prestador.nome}')">Conversar</button>
+        </div>
+      </div>
+    `;
+  } else {
+    container.innerHTML = `<p>Nenhum profissional encontrado.</p>`;
+  }
 }
 
-// Cadastro
-document.getElementById("btnCadastrar").addEventListener("click", () => {
-  const nome = document.getElementById('cadNome').value.trim();
-  const email = document.getElementById('cadEmail').value.trim();
-  const senha = document.getElementById('cadSenha').value.trim();
+// ----------------------
+// CHAT
+// ----------------------
+let chatAtivo = "";
+let mensagens = [];
 
-  if (nome && email && senha) {
-    localStorage.setItem('clienteNome', nome);
-    localStorage.setItem('clienteEmail', email);
-    localStorage.setItem('clienteSenha', senha);
-    alert('Cadastro realizado com sucesso!');
-    voltarInicio();
-  } else {
-    alert('Por favor, preencha todos os campos.');
-  }
-});
+function abrirChat(nomePrestador) {
+  chatAtivo = nomePrestador;
+  pesquisaSection.classList.add("d-none");
+  chatSection.classList.remove("d-none");
 
-// Validação de login
-document.getElementById("btnLogin").addEventListener("click", () => {
-  const email = document.getElementById('loginEmail').value.trim();
-  const senha = document.getElementById('loginSenha').value.trim();
-  const emailCadastrado = localStorage.getItem('clienteEmail');
-  const senhaCadastrada = localStorage.getItem('clienteSenha');
-  const nomeCadastrado = localStorage.getItem('clienteNome');
+  chatCom.innerHTML = `Chat com <b>${nomePrestador}</b>`;
 
-  if (email === emailCadastrado && senha === senhaCadastrada) {
-    document.getElementById('formLoginSection').classList.add('d-none');
-    document.getElementById('pesquisaSection').classList.remove('d-none');
-    document.getElementById('boasVindas').textContent = `Bem-vindo(a), ${nomeCadastrado}!`;
-  } else {
-    mostrarAlerta("E-mail ou senha incorretos. Tente novamente.", "danger");
-  }
-});
+  mensagens = JSON.parse(localStorage.getItem("chatMensagens") || "[]");
 
-// Fluxo do serviço
-document.getElementById("btnPesquisar").addEventListener("click", () => {
-  document.getElementById('pesquisaSection').classList.add('d-none');
-  document.getElementById('resultadoSection').classList.remove('d-none');
-});
+  renderizarChat();
+}
 
-document.getElementById("btnContratar").addEventListener("click", () => {
-  document.getElementById('resultadoSection').classList.add('d-none');
-  document.getElementById('confirmacaoSection').classList.remove('d-none');
-});
+function renderizarChat() {
+  chatMensagens.innerHTML = mensagens
+    .map((m) => `<p><strong>${m.autor}:</strong> ${m.texto}</p>`)
+    .join("");
+}
 
-document.getElementById("btnPagar").addEventListener("click", () => {
-  document.getElementById('confirmacaoSection').classList.add('d-none');
-  document.getElementById('avaliacaoSection').classList.remove('d-none');
-});
+function enviarMensagem() {
+  const texto = msgCliente.value.trim();
+  if (!texto) return;
+
+  mensagens.push({ autor: "Cliente", texto });
+
+  localStorage.setItem("chatMensagens", JSON.stringify(mensagens));
+
+  msgCliente.value = "";
+  renderizarChat();
+}
+
+function fecharChat() {
+  chatSection.classList.add("d-none");
+  pesquisaSection.classList.remove("d-none");
+}
