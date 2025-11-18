@@ -175,7 +175,7 @@ h1, h2, h5 {
 /* ajustes tela do cliente */
 
 .text-center{
-background: rgba(26, 150, 166, 0.47);
+background: rgba(26, 150, 166, 0.315);
 border-radius: 16px;
 box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
 backdrop-filter: blur(6.7px);
@@ -268,5 +268,34 @@ border: 1px solid rgba(26, 150, 166, 0.39);
   width: 220px;
   height: 220px;
   opacity: 1;
+}
+
+.img-home{
+     display: flex;          /* Faz a imagem se comportar como um bloco */
+  margin-right: auto;       /* Empurra a imagem para a direita */
+  margin-right: 0;
+  width: 600px;            /* Ajusta a largura */
+  height: 450px;            /* Mantém a proporção original */
+  margin-top: 50px;
+  border-radius: 3%;
+  
+}
+
+.imagem-direita-container {
+  position:absolute;
+  justify-content: flex-end;   /* empurra a imagem para a direita */
+  width: 100%;
+  margin-top: 40px;
+  top: 335px;
+  left: 55%;
+
+}
+
+.imagem-direita {
+  width: 550px;        /* ajuste até encaixar no retângulo amarelo */
+  height: 450px;       /* ajuste proporcional */
+  object-fit: cover;   /* mantém o enquadramento */
+  border-radius: 12px; /* deixa igual à outra imagem */
+  margin-right: 120px; /* ajusta a distância da borda direita da tela */
 }
 
