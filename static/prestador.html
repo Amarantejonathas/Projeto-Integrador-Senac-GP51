@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ConectaServ - Prestador</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<nav class="navbar navbar-dark bg-primary">
+  <div class="container">
+    <a class="navbar-brand" href="index.html">ConectaServ - Você será parte na solução!</a>
+     <img src="img/logo.png" alt="logo ConectaServ" class="logo">
+  </div>
+</nav>
+<div class="container mt-5">
+  <h2 class="text-center mb-4">Portal do Prestador</h2>
+
+  <!-- Tela inicial-->
+  <div id="loginPrestador" class="text-center">
+    <h4>Tem cadastro?</h4>
+    <!-- abre o FORM de login-->
+    <button class="btn btn-primary m-2" onclick="mostrarLogin('prestador')">Sim, fazer login</button>
+    <button class="btn btn-secondary m-2" onclick="mostrarCadastro('prestador')">Não, quero me cadastrar</button>
+  </div>
+
+  <!-- FORMULÁRIO DE LOGIN -->
+  <div id="formLoginPrestador" class="d-none text-center">
+    <h5>Login do Prestador</h5>
+    <input type="email" class="form-control mb-2" id="loginEmailPrestador" placeholder="E-mail">
+    <input type="password" class="form-control mb-2" id="loginSenhaPrestador" placeholder="Senha">
+    <button class="btn btn-success" id="btnLoginPrestador">Entrar</button>
+    <button class="btn btn-link" onclick="voltarInicioPrestador()">Voltar</button>
+
+    <!-- Container onde os alerts do Bootstrap aparecerão -->
+    <div id="alertContainerPrestador" class="mt-3"></div>
+  </div>
+
+  <!-- CADASTRO do prestador-->
+ <div id="cadastroPrestador" class="d-none">
+  <h5>Cadastro do Prestador</h5>
+
+  <input type="text" class="form-control mb-2" id="cadNomePrestador" placeholder="Nome completo">
+  <input type="email" class="form-control mb-2" id="cadEmailPrestador" placeholder="E-mail">
+  <input type="text" class="form-control mb-2" id="cadProfissaoPrestador" placeholder="Profissão">
+  <input type="password" class="form-control mb-2" id="cadSenhaPrestador" placeholder="Senha">
+
+  <label class="mt-2"><strong>Fotos dos seus trabalhos:</strong></label>
+  <input type="file" id="cadFotosPrestador" class="form-control mb-2" multiple accept="image/*">
+
+  <label><strong>Descrição dos seus trabalhos:</strong></label>
+  <textarea id="cadDescricaoPrestador" class="form-control mb-2" placeholder="Descreva seu trabalho"></textarea>
+
+  <button class="btn btn-success" id="btnCadastrarPrestador">Cadastrar e adicionar trabalhos</button>
+  <button class="btn btn-link" onclick="voltarInicioPrestador()">Voltar</button>
+
+  <div id="alertContainerCadastroPrestador" class="mt-3"></div>
+</div>
+
+  <!-- Notificação, Chat, Pagamento e Avaliação-->
+  <div id="notificacaoSection" class="d-none text-center">
+    <h5>Você recebeu uma notificação de cliente interessado!</h5>
+    <button class="btn btn-info" onclick="abrirChat()">Abrir chat</button>
+  </div>
+
+  <div id="chatSection" class="d-none">
+    <h5>Chat com o cliente</h5>
+    <textarea class="form-control mb-2" id="chatResposta" placeholder="Digite uma resposta..."></textarea>
+    <button class="btn btn-primary" onclick="clienteContrata()">Enviar</button>
+  </div>
+
+  <div id="pagamentoSection" class="d-none text-center">
+    <h5>O cliente realizou o pagamento adiantado!</h5>
+    <button class="btn btn-success" onclick="finalizarAtendimento()">Concluir serviço</button>
+  </div>
+
+  <div id="avaliacaoPrestador" class="d-none text-center">
+    <h5>Serviço concluído e pago!</h5>
+    <p>Você recebeu sua avaliação. Continue prestando ótimos serviços!</p>
+  </div>
+
+</div>
+
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+<!-- conexão com arquivo javascript -->
+<script src="prestador.js"></script>
+
+</body>
+</html>
+
