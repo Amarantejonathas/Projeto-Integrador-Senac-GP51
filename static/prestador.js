@@ -1,12 +1,15 @@
 // =======================
-// Integração com API Flask
+// prestador.js corrigido
 // =======================
 
-const formCadastroPrest = document.getElementById("form-cad-prestador");
-const formLoginPrest = document.getElementById("form-login-prestador");
-const notificacoesDiv = document.getElementById("notificacoes");
+// Exibir alertas formatados
+function showAlertPrest(containerId, html) {
+    const c = document.getElementById(containerId);
+    if (c) c.innerHTML = html;
+    else alert(html.replace(/<[^>]*>?/gm, ""));
+}
 
-// Auxiliares
+// Helpers
 function getTokenPrestador() {
     return localStorage.getItem("token_prestador") || "";
 }
@@ -18,144 +21,160 @@ function authHeadersPrestador() {
     };
 }
 
-// ==============================
-// CADASTRO DE PRESTADOR
-// ==============================
-if (formCadastroPrest) {
-    formCadastroPrest.addEventListener("submit", async function (e) {
-        e.preventDefault();
+// =========================
+// LOGIN DO PRESTADOR
+// =========================
 
-        const nome = document.getElementById("prest-nome").value.trim();
-        const email = document.getElementById("prest-email").value.trim();
-        const profissao = document.getElementById("prest-profissao").value.trim();
-        const descricao = document.getElementById("prest-descricao").value.trim();
-        const senha = document.getElementById("prest-senha").value;
+const btnLoginPrest = document.getElementById("btnLoginPrestador");
+if (btnLoginPrest) {
+    btnLoginPrest.addEventListener("click", async function () {
 
-        // Fotos (convertidas em base64)
-        const fotosInput = document.getElementById("prest-fotos");
+        const email = document.getElementById("loginEmailPrestador").value.trim();
+        const senha = document.getElementById("loginSenhaPrestador").value;
+
+        if (!email || !senha) {
+            showAlertPrest("alertContainerPrestador",
+                `<div class="alert alert-warning">Preencha todos os campos.</div>`);
+            return;
+        }
+
+        try {
+            const res = await fetch("/api/provider/login", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ email, senha })
+            });
+
+            const data = await res.json();
+
+            if (!res.ok) {
+                showAlertPrest("alertContainerPrestador",
+                    `<div class="alert alert-danger">${data.error || "Erro ao fazer login"}</div>`);
+                return;
+            }
+
+            // Salvar dados
+            localStorage.setItem("token_prestador", data.token);
+            localStorage.setItem("prestador_id", data.provider.id);
+            localStorage.setItem("prestador_nome", data.provider.nome);
+
+            showAlertPrest("alertContainerPrestador",
+                `<div class="alert alert-success">Login realizado! Redirecionando...</div>`);
+
+            setTimeout(() => {
+                window.location.href = "prestador.html";
+            }, 900);
+
+        } catch (err) {
+            showAlertPrest("alertContainerPrestador",
+                `<div class="alert alert-danger">Erro ao conectar ao servidor.</div>`);
+        }
+    });
+}
+
+// =========================
+// CADASTRO DO PRESTADOR
+// =========================
+
+const btnCadastrarPrestador = document.getElementById("btnCadastrarPrestador");
+
+if (btnCadastrarPrestador) {
+
+    btnCadastrarPrestador.addEventListener("click", async function () {
+
+        const nome = document.getElementById("cadNomePrestador").value.trim();
+        const email = document.getElementById("cadEmailPrestador").value.trim();
+        const profissao = document.getElementById("cadProfissaoPrestador").value.trim();
+        const descricao = document.getElementById("cadDescricaoPrestador").value.trim();
+        const senha = document.getElementById("cadSenhaPrestador").value;
+        const fotosInput = document.getElementById("cadFotosPrestador");
+
         let fotosBase64 = [];
 
-        if (fotosInput.files.length > 0) {
+        if (fotosInput && fotosInput.files.length > 0) {
             for (const file of fotosInput.files) {
-                const base64 = await fileToBase64(file);
-                fotosBase64.push(base64);
+                fotosBase64.push(await fileToBase64(file));
             }
         }
 
-        const res = await fetch("/api/provider/register", {
-            method: "POST",
-            headers: {"Content-Type": "application/json"},
-            body: JSON.stringify({
-                nome,
-                email,
-                profissao,
-                descricao,
-                senha,
-                fotos: fotosBase64
-            })
-        });
-
-        const data = await res.json();
-
-        if (!res.ok) {
-            alert(data.error || "Erro ao cadastrar prestador");
+        if (!nome || !email || !profissao || !senha) {
+            showAlertPrest("alertContainerCadastroPrestador",
+                `<div class="alert alert-warning">Preencha todos os campos obrigatórios.</div>`);
             return;
         }
 
-        alert("Prestador cadastrado com sucesso!");
-        window.location.href = "prestador.html";
+        try {
+            const res = await fetch("/api/provider/register", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    nome, email, profissao,
+                    descricao, senha, fotos: fotosBase64
+                })
+            });
+
+            const data = await res.json();
+
+            if (!res.ok) {
+                showAlertPrest("alertContainerCadastroPrestador",
+                    `<div class="alert alert-danger">${data.error || "Erro ao cadastrar"}</div>`);
+                return;
+            }
+
+            showAlertPrest("alertContainerCadastroPrestador",
+                `<div class="alert alert-success">Cadastro realizado com sucesso! Redirecionando...</div>`);
+
+            setTimeout(() => {
+                window.location.href = "prestador.html";
+            }, 1200);
+
+        } catch (err) {
+            showAlertPrest("alertContainerCadastroPrestador",
+                `<div class="alert alert-danger">Erro ao conectar ao servidor.</div>`);
+        }
     });
 }
 
-// Função auxiliar p/ foto → Base64
+// Conversão de arquivos para Base64
 function fileToBase64(file) {
     return new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.onload = () => resolve(reader.result.split(",")[1]);
-        reader.onerror = reject;
-        reader.readAsDataURL(file);
+        const r = new FileReader();
+        r.onload = () => resolve(r.result.split(",")[1]);
+        r.onerror = reject;
+        r.readAsDataURL(file);
     });
 }
 
-// ==============================
-// LOGIN DO PRESTADOR
-// ==============================
-if (formLoginPrest) {
-    formLoginPrest.addEventListener("submit", async function (e) {
-        e.preventDefault();
+// =========================
+// ÁREA LOGADA DO PRESTADOR
+// =========================
 
-        const email = document.getElementById("login-prest-email").value.trim();
-        const senha = document.getElementById("login-prest-senha").value;
+const areaPrestador = document.getElementById("areaPrestador");
+const inicioPrestador = document.getElementById("inicioPrestador");
 
-        const res = await fetch("/api/provider/login", {
-            method: "POST",
-            headers: {"Content-Type": "application/json"},
-            body: JSON.stringify({ email, senha })
-        });
+window.addEventListener("DOMContentLoaded", () => {
 
-        const data = await res.json();
+    const token = getTokenPrestador();
+    const nome = localStorage.getItem("prestador_nome");
 
-        if (!res.ok) {
-            alert(data.error || "Erro no login");
-            return;
-        }
+    if (token && areaPrestador && inicioPrestador) {
+        inicioPrestador.classList.add("d-none");
+        areaPrestador.classList.remove("d-none");
 
-        localStorage.setItem("token_prestador", data.token);
-        localStorage.setItem("prestador_id", data.provider.id);
+        const boas = document.getElementById("boasVindasPrestador");
+        if (boas) boas.innerText = `Bem-vindo, ${nome}!`;
+    }
+});
 
-        alert("Login efetuado!");
+// Logout do prestador
+const btnLogoutPrest = document.getElementById("btnLogoutPrestador");
+if (btnLogoutPrest) {
+    btnLogoutPrest.addEventListener("click", () => {
+
+        localStorage.removeItem("token_prestador");
+        localStorage.removeItem("prestador_id");
+        localStorage.removeItem("prestador_nome");
+
         window.location.href = "prestador.html";
     });
-}
-
-// ==============================
-// NOTIFICAÇÕES (mensagens de clientes)
-// ==============================
-async function carregarNotificacoes() {
-    const res = await fetch("/api/provider/notifications", {
-        headers: authHeadersPrestador()
-    });
-
-    const msgs = await res.json();
-
-    if (!Array.isArray(msgs)) {
-        notificacoesDiv.innerHTML = "<p>Erro ao carregar notificações.</p>";
-        return;
-    }
-
-    notificacoesDiv.innerHTML = "";
-
-    msgs.forEach(msg => {
-        notificacoesDiv.innerHTML += `
-            <div class="card p-2 mb-2">
-                <b>Cliente ID:</b> ${msg.from_client_id}<br>
-                <b>Mensagem:</b> ${msg.texto}<br>
-                <button class="btn btn-success mt-1" onclick="abrirChatPrestador(${msg.from_client_id})">
-                    Responder
-                </button>
-            </div>
-        `;
-    });
-}
-
-// Abrir chat para responder cliente
-function abrirChatPrestador(client_id) {
-    localStorage.setItem("chat_client_id", client_id);
-    window.location.href = "chat_prestador.html";
-}
-
-// Enviar mensagem de prestador → cliente
-async function enviarMensagemPrestador(texto) {
-    const client_id = localStorage.getItem("chat_client_id");
-
-    const res = await fetch("/api/chat/send", {
-        method: "POST",
-        headers: authHeadersPrestador(),
-        body: JSON.stringify({
-            client_id,
-            texto
-        })
-    });
-
-    return await res.json();
 }

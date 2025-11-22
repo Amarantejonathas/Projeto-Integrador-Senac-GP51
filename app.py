@@ -1,9 +1,9 @@
 import json
+import os
 from flask import Flask, request, jsonify, send_from_directory, abort
 from flask_cors import CORS
-from models import db, Client, Provider, ChatMessage, generate_token
 from werkzeug.security import generate_password_hash, check_password_hash
-import os
+from models import db, Client, Provider, ChatMessage, generate_token
 
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
 STATIC_FOLDER = os.path.join(BASE_DIR, "static")
@@ -17,22 +17,16 @@ def create_app():
 
     db.init_app(app)
 
-    # Serve index.html como rota raiz
     @app.route("/")
     def index():
         return send_from_directory(STATIC_FOLDER, "index.html")
 
-    # Serve qualquer arquivo estático (html/js/css/img) da pasta static
     @app.route("/<path:filename>")
     def static_files(filename):
-        # protege contra traversal
         if ".." in filename:
             abort(404)
         return send_from_directory(STATIC_FOLDER, filename)
 
-    # -----------------------
-    # Helpers de autenticação
-    # -----------------------
     def require_client(auth_header):
         if not auth_header:
             return None
@@ -51,9 +45,7 @@ def create_app():
         token = parts[1]
         return Provider.query.filter_by(auth_token=token).first()
 
-    # -----------------------
-    # Cliente endpoints
-    # -----------------------
+    # Client register
     @app.route("/api/client/register", methods=["POST"])
     def client_register():
         data = request.get_json() or {}
@@ -73,6 +65,7 @@ def create_app():
         db.session.commit()
         return jsonify({"message": "Cadastro realizado"}), 201
 
+    # Client login
     @app.route("/api/client/login", methods=["POST"])
     def client_login():
         data = request.get_json() or {}
@@ -86,9 +79,7 @@ def create_app():
         db.session.commit()
         return jsonify({"token": token, "cliente": {"id": c.id, "nome": c.nome, "email": c.email}})
 
-    # -----------------------
-    # Prestador endpoints
-    # -----------------------
+    # Provider register
     @app.route("/api/provider/register", methods=["POST"])
     def provider_register():
         data = request.get_json() or {}
@@ -97,21 +88,23 @@ def create_app():
         profissao = data.get("profissao", "").strip()
         descricao = data.get("descricao", "")
         senha = data.get("senha", "")
-        fotos = data.get("fotos", [])  # espera lista de base64 strings
+        fotos = data.get("fotos", [])
 
-        if not nome or not email or not profissao or not senha or not descricao:
-            return jsonify({"error": "Preencha todos os campos"}), 400
+        if not nome or not email or not profissao or not senha:
+            return jsonify({"error": "Preencha todos os campos obrigatórios"}), 400
 
         if Provider.query.filter_by(email=email).first():
             return jsonify({"error": "E-mail já cadastrado"}), 400
 
         senha_hash = generate_password_hash(senha)
         fotos_json = json.dumps(fotos)
-        p = Provider(nome=nome, email=email, profissao=profissao, descricao=descricao, senha_hash=senha_hash, fotos_base64=fotos_json)
+        p = Provider(nome=nome, email=email, profissao=profissao, descricao=descricao,
+                     senha_hash=senha_hash, fotos_base64=fotos_json)
         db.session.add(p)
         db.session.commit()
         return jsonify({"message": "Prestador cadastrado"}), 201
 
+    # Provider login
     @app.route("/api/provider/login", methods=["POST"])
     def provider_login():
         data = request.get_json() or {}
@@ -125,9 +118,7 @@ def create_app():
         db.session.commit()
         return jsonify({"token": token, "provider": {"id": p.id, "nome": p.nome, "email": p.email}})
 
-    # -----------------------
-    # Buscar prestadores
-    # -----------------------
+    # List providers
     @app.route("/api/providers", methods=["GET"])
     def list_providers():
         q = (request.args.get("q") or "").strip().lower()
@@ -141,10 +132,9 @@ def create_app():
         providers = query.all()
         out = []
         for p in providers:
-            fotos = []
             try:
                 fotos = json.loads(p.fotos_base64) if p.fotos_base64 else []
-            except Exception:
+            except:
                 fotos = []
             out.append({
                 "id": p.id,
@@ -156,12 +146,40 @@ def create_app():
             })
         return jsonify(out)
 
-    # -----------------------
-    # Chat endpoints
-    # -----------------------
+    # ============================================================
+    # 🔥 NOVA ROTA — BUSCA POR PROFISSÃO
+    # GET /api/provider/search?profissao=xxxx
+    # ============================================================
+    @app.route("/api/provider/search", methods=["GET"])
+    def provider_search():
+        profissao = (request.args.get("profissao") or "").strip()
+
+        if not profissao:
+            return jsonify({"error": "Parametro 'profissao' é obrigatório"}), 400
+
+        providers = Provider.query.filter(
+            Provider.profissao.ilike(f"%{profissao}%")
+        ).all()
+
+        result = []
+        for p in providers:
+            try:
+                fotos = json.loads(p.fotos_base64) if p.fotos_base64 else []
+            except:
+                fotos = []
+            result.append({
+                "id": p.id,
+                "nome": p.nome,
+                "profissao": p.profissao,
+                "descricao": p.descricao,
+                "fotos": fotos
+            })
+
+        return jsonify(result), 200
+
+    # Chat send
     @app.route("/api/chat/send", methods=["POST"])
     def chat_send():
-        # pode ser chamado por cliente ou prestador; usamos Authorization header para identificar
         auth = request.headers.get("Authorization", None)
         data = request.get_json() or {}
         texto = (data.get("texto") or "").strip()
@@ -171,34 +189,29 @@ def create_app():
         if not texto:
             return jsonify({"error": "Mensagem vazia"}), 400
 
-        # tenta identificar cliente
         client = require_client(auth)
         provider = require_provider(auth)
 
         if client and provider:
-            return jsonify({"error": "Token inválido (confusão de sessão)"}), 401
+            return jsonify({"error": "Token inválido"}), 401
 
         if client:
-            # cliente enviando => precisa provider_id
             if not provider_id:
                 return jsonify({"error": "provider_id é requerido"}), 400
             p = Provider.query.get(provider_id)
             if not p:
                 return jsonify({"error": "Prestador não encontrado"}), 404
-
             msg = ChatMessage(client_id=client.id, provider_id=p.id, autor="client", texto=texto)
             db.session.add(msg)
             db.session.commit()
             return jsonify({"message": "Enviado", "id": msg.id})
 
         if provider:
-            # provider enviando => precisa client_id
             if not client_id:
                 return jsonify({"error": "client_id é requerido"}), 400
             c = Client.query.get(client_id)
             if not c:
                 return jsonify({"error": "Cliente não encontrado"}), 404
-
             msg = ChatMessage(client_id=c.id, provider_id=provider.id, autor="provider", texto=texto)
             db.session.add(msg)
             db.session.commit()
@@ -206,28 +219,25 @@ def create_app():
 
         return jsonify({"error": "Autenticação requerida"}), 401
 
+    # Chat history
     @app.route("/api/chat/<int:provider_id>/with_client/<int:client_id>", methods=["GET"])
     def chat_history(provider_id, client_id):
-        # qualquer usuário autenticado (client ou provider) poderá ver a conversa entre client_id e provider_id
         auth = request.headers.get("Authorization", None)
         client = require_client(auth)
         provider = require_provider(auth)
         if not client and not provider:
             return jsonify({"error": "Autenticação requerida"}), 401
-
         msgs = ChatMessage.query.filter_by(provider_id=provider_id, client_id=client_id).order_by(ChatMessage.created_at).all()
         out = [{"id": m.id, "autor": m.autor, "texto": m.texto, "created_at": m.created_at.isoformat()} for m in msgs]
         return jsonify(out)
 
-    # Endpoint simples para o prestador ver notificações (ultimas msgs de clientes)
+    # Provider notifications
     @app.route("/api/provider/notifications", methods=["GET"])
     def provider_notifications():
         auth = request.headers.get("Authorization", None)
         provider = require_provider(auth)
         if not provider:
             return jsonify({"error": "Autenticação de prestador requerida"}), 401
-
-        # pegar mensagens recentes recebidas por provider (autor = client)
         msgs = ChatMessage.query.filter_by(provider_id=provider.id, autor="client").order_by(ChatMessage.created_at.desc()).limit(20).all()
         out = []
         for m in msgs:
@@ -239,7 +249,6 @@ def create_app():
             })
         return jsonify(out)
 
-    # Endpoint de saúde
     @app.route("/api/health", methods=["GET"])
     def health():
         return jsonify({"status": "ok"})
@@ -248,7 +257,6 @@ def create_app():
 
 if __name__ == "__main__":
     app = create_app()
-    # cria DB se necessário
     with app.app_context():
         db.create_all()
     app.run(host="0.0.0.0", port=5000, debug=True)
