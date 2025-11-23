@@ -1,6 +1,5 @@
 # Projeto-Integrador-Senac-GP51
-Projeto integrador plataforma ConectaServ
-
+PROJETO INTEGRADOR PLATAFORMA CONECTASERV 
 <h1>
     <img src="image.png"> 
 
@@ -105,14 +104,19 @@ Para contribuir com o projeto, acesse o repositório oficial no GitHub:
 - **HTML**
 - **CSS**
 - **JavaScript**
+- **SQLite**
+
+---
+
+## 🔨 Extensões necessarias 
+
+- Flask==2.3.3
+- Flask-SQLAlchemy==3.0.3
+- Flask-JWT-Extended==4.4.4
+- Werkzeug==2.3.6
 
 ---
 
 ## ✔ Sobre o Projeto
 
 O ConectaServ tem como missão unir praticidade e segurança, conectando pessoas que precisam de serviços a profissionais autônomos que desejam crescer e conquistar espaço no mercado.
-
-
-link para rodar: http://localhost:5000/static/index.html
-
-link para rodar: http://localhost:5000/static/index.html
