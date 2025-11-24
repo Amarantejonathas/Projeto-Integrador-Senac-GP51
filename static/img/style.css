@@ -217,37 +217,40 @@ h1, h2, h5 {
 /* ---- BLOCO TÉCNICO ---- */
 .tecnico-img {
   width: 100%;
-  max-width: 500px;
+  max-width: 480px; /* Ajuste para não ultrapassar o texto */
   height: auto;
 }
 
 /* Caixa de texto ao lado da imagem */
 .text-box {
-  background: rgba(255, 255, 255, 0.09);
-  padding: 25px;
+  background: rgba(255, 255, 255, 0.10);
+  padding: 30px;
   border-radius: 12px;
   color: #f0eff3;
   font-family: 'Times New Roman', serif;
   font-size: 1.2rem;
-  line-height: 1.5;
+  line-height: 1.6;
   box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+
+  /* ESSENCIAIS PARA FICAR NA ÁREA AMARELA */
+  max-width: 480px;            /* largura controlada */
+  margin-left: auto;           /* encosta no lado direito do grid */
+  margin-right: auto;          /* centraliza se necessário */
 }
 
-/* Ajustar título dentro do bloco */
+/* Título */
 .text-box h3 {
   color: #ffffff;
   font-weight: bold;
   margin-bottom: 15px;
   font-size: 1.8rem;
+  text-align: left;
 }
 
-/* Responsivo para celulares */
+/* Responsividade */
 @media (max-width: 768px) {
-  .col-md-6 {
-    text-align: center;
-  }
-
   .text-box {
+    max-width: 100%;
     margin-top: 20px;
   }
 }
