@@ -33,30 +33,16 @@
 </div>
 
 <script>
-// ----------------------------------------
-// Carregar dados do cliente
-// ----------------------------------------
 const token = localStorage.getItem("token_cliente");
 const providerId = localStorage.getItem("chat_provider_id");
 const clientId = localStorage.getItem("cliente_id");
 
-// Verificações
-if (!token) {
-  alert("Você precisa estar logado para acessar o chat.");
-  window.location.href = "cliente.html";
-}
-
-if (!providerId) {
-  alert("Nenhum prestador selecionado.");
-  window.location.href = "cliente.html";
-}
-
 // ----------------------------------------
-// CARREGAR HISTÓRICO DE MENSAGENS
+// CARREGAR HISTÓRICO
 // ----------------------------------------
 async function carregarMensagens() {
   try {
-    const res = await fetch(`/api/chat/history?provider_id=${providerId}`, {
+    const res = await fetch(`/api/chat/history?provider_id=${providerId}&client_id=${clientId}`, {
       headers: { "Authorization": `Bearer ${token}` }
     });
 
@@ -67,7 +53,7 @@ async function carregarMensagens() {
     mensagens.forEach(msg => {
       const linha = document.createElement("div");
 
-      if (msg.from === "cliente") {
+      if (msg.from === "client") {
         linha.innerHTML = `<b>Você:</b> ${msg.texto}`;
       } else {
         linha.innerHTML = `<b>Prestador:</b> ${msg.texto}`;
@@ -83,51 +69,35 @@ async function carregarMensagens() {
   }
 }
 
+
 // ----------------------------------------
-// ENVIAR MENSAGEM
+// ENVIAR MENSAGENS
 // ----------------------------------------
 document.getElementById("chatSendBtn").addEventListener("click", async () => {
-
   const texto = document.getElementById("chatInput").value.trim();
   if (!texto) return;
 
-  try {
-    const res = await fetch("/api/chat/send", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${token}`
-      },
-      body: JSON.stringify({
-        provider_id: providerId,
-        texto
-      })
-    });
+  const res = await fetch("/api/chat/send", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "Authorization": `Bearer ${token}`
+    },
+    body: JSON.stringify({
+      provider_id: providerId,
+      client_id: clientId,
+      texto
+    })
+  });
 
-    if (!res.ok) {
-      alert("Erro ao enviar mensagem.");
-      return;
-    }
+  document.getElementById("chatInput").value = "";
 
-    // Limpa o campo
-    document.getElementById("chatInput").value = "";
-
-    // Exibir mensagem imediatamente
-    const chat = document.getElementById("chatArea");
-    const linha = document.createElement("div");
-    linha.innerHTML = `<b>Você:</b> ${texto}`;
-    chat.appendChild(linha);
-    chat.scrollTop = chat.scrollHeight;
-
-  } catch (e) {
-    alert("Erro ao conectar ao servidor.");
-  }
+  carregarMensagens();
 });
 
-// Inicializa o chat
 carregarMensagens();
-
 </script>
+
 
 </body>
 </html>

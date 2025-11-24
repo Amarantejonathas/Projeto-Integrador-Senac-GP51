@@ -252,6 +252,30 @@ def create_app():
     @app.route("/api/health", methods=["GET"])
     def health():
         return jsonify({"status": "ok"})
+    # CHAT HISTORY (rota compatível com o front antigo)
+    @app.route("/api/chat/history", methods=["GET"])
+    def chat_history_query():
+       provider_id = request.args.get("provider_id", type=int)
+       client_id = request.args.get("client_id", type=int)
+
+       if not provider_id or not client_id:
+          return jsonify({"error": "provider_id e client_id são obrigatórios"}), 400
+
+       msgs = ChatMessage.query.filter_by(
+        provider_id=provider_id,
+        client_id=client_id
+        ).order_by(ChatMessage.created_at).all()
+
+       out = [
+        {
+            "id": m.id,
+            "from": m.autor,      # <-- compatível com seu HTML
+            "texto": m.texto,
+            "created_at": m.created_at.isoformat()
+                } for m in msgs
+       ] 
+
+       return jsonify(out)
 
     return app
 
@@ -260,3 +284,39 @@ if __name__ == "__main__":
     with app.app_context():
         db.create_all()
     app.run(host="0.0.0.0", port=5000, debug=True)
+    # ===========================================
+# CHAT HISTORY UNIVERSAL
+# GET /api/chat/history?client_id=XX&provider_id=YY
+# ===========================================
+@app.route("/api/chat/history", methods=["GET"])
+def chat_history_universal():
+    auth = request.headers.get("Authorization", None)
+    client = require_client(auth)
+    provider = require_provider(auth)
+
+    if not client and not provider:
+        return jsonify({"error": "Autenticação requerida"}), 401
+
+    client_id = request.args.get("client_id", type=int)
+    provider_id = request.args.get("provider_id", type=int)
+
+    if not client_id or not provider_id:
+        return jsonify({"error": "client_id e provider_id são obrigatórios"}), 400
+
+    msgs = ChatMessage.query.filter_by(
+        client_id=client_id,
+        provider_id=provider_id
+    ).order_by(ChatMessage.created_at).all()
+
+    out = [
+        {
+            "id": m.id,
+            "from": m.autor,
+            "texto": m.texto,
+            "created_at": m.created_at.isoformat()
+        }
+        for m in msgs
+    ]
+
+    return jsonify(out), 200
+

@@ -68,6 +68,14 @@
         document.getElementById("pesquisaSection").classList.remove("d-none");
         document.getElementById("boasVindas").innerText = `Bem-vindo, ${nome}!`;
       }
+      if (token) {
+          document.getElementById("inicioSection").classList.add("d-none");
+          document.getElementById("pesquisaSection").classList.remove("d-none");
+
+          const nomeFinal = nome || "Prezado(a)";
+          document.getElementById("boasVindas").innerText = `Bem-vindo(a), ${nomeFinal}!`;
+}
+
     };
 
     // ================================

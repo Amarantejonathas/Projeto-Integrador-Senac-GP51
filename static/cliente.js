@@ -68,6 +68,7 @@ if (formLogin) {
             }
             localStorage.setItem("token_cliente", data.token);
             localStorage.setItem("cliente_id", data.cliente.id);
+            localStorage.setItem("cliente_nome", data.cliente.nome);
             if (container) container.innerHTML = `<div class="alert alert-success">Login realizado! Redirecionando...</div>`;
             setTimeout(()=>{ window.location.href = "cliente.html"; }, 900);
         } catch(err) {
@@ -110,5 +111,6 @@ async function pesquisarProfissionais() {
 
 function abrirChat(provider_id) {
     localStorage.setItem("chat_provider_id", provider_id);
+    localStorage.setItem("chat_client_id", localStorage.getItem("cliente_id"));
     window.location.href = "chat_cliente.html";
 }

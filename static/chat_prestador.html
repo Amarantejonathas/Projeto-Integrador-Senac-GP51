@@ -22,7 +22,7 @@
   <h4 id="chatTitle">Chat com Cliente</h4>
 
   <div id="chatArea" class="border p-3 mb-3"
-       style="height:300px; overflow-y:auto; background:#f7f7f7;">
+       style="height:300px; overflow-y:auto; background:#402fdd;">
   </div>
 
   <div class="input-group">
@@ -33,89 +33,80 @@
 </div>
 
 <script>
-// ------------------------------
-// Validar login do prestador
-// ------------------------------
 const token = localStorage.getItem("token_prestador");
-const prestadorId = localStorage.getItem("prestador_id");
-const clientId = localStorage.getItem("chat_client_id"); // Cliente correto
+const providerId = localStorage.getItem("prestador_id");
+const clientId = localStorage.getItem("chat_client_id");
 
-if (!token) {
-  alert("Você precisa estar logado para acessar o chat.");
-  window.location.href = "prestador.html";
-}
-
-// ------------------------------
-// Carregar histórico de mensagens
-// ------------------------------
+// ------------------------------------
+// CARREGAR HISTÓRICO
+// ------------------------------------
 async function carregarMensagens() {
-  try {
-    const res = await fetch(`/api/chat/history?client_id=${clientId}`, {
-      headers: { "Authorization": `Bearer ${token}` }
-    });
-    const mensagens = await res.json();
 
+  if (!clientId) {
+    console.error("ERRO: client_id não encontrado no localStorage");
+    return;
+  }
+
+  try {
+    const res = await fetch(
+      `/api/chat/history?provider_id=${providerId}&client_id=${clientId}`,
+      { headers: { "Authorization": `Bearer ${token}` } }
+    );
+
+    const mensagens = await res.json();
     const chat = document.getElementById("chatArea");
     chat.innerHTML = "";
 
     mensagens.forEach(msg => {
       const linha = document.createElement("div");
 
-      if (msg.from === "prestador") {
+      // CORREÇÃO: usar msg.from conforme o backend retorna
+      if (msg.from === "provider") {
         linha.innerHTML = `<b>Você:</b> ${msg.texto}`;
       } else {
         linha.innerHTML = `<b>Cliente:</b> ${msg.texto}`;
       }
+
       chat.appendChild(linha);
     });
 
     chat.scrollTop = chat.scrollHeight;
 
-  } catch (err) {
-    console.error("Erro ao carregar histórico:", err);
+  } catch (e) {
+    console.error("Erro ao carregar mensagens:", e);
   }
 }
 
-// ------------------------------
-// Enviar mensagem
-// ------------------------------
+// ------------------------------------
+// ENVIAR MENSAGEM
+// ------------------------------------
 document.getElementById("chatSendBtn").addEventListener("click", async () => {
 
   const texto = document.getElementById("chatInput").value.trim();
   if (!texto) return;
 
-  try {
-    const res = await fetch("/api/chat/send", {
-      method: "POST",
-      headers: {
-        "Content-Type":"application/json",
-        "Authorization": `Bearer ${token}`
-      },
-      body: JSON.stringify({
-        client_id: clientId,
-        texto
-      })
-    });
-
-    if (!res.ok) {
-      alert("Erro ao enviar mensagem.");
-      return;
-    }
-
-    document.getElementById("chatInput").value = "";
-
-    const chat = document.getElementById("chatArea");
-    const linha = document.createElement("div");
-    linha.innerHTML = `<b>Você:</b> ${texto}`;
-    chat.appendChild(linha);
-    chat.scrollTop = chat.scrollHeight;
-
-  } catch (e) {
-    alert("Erro ao conectar ao servidor.");
+  if (!clientId) {
+    alert("Erro: client_id não encontrado. Abra o chat a partir de uma notificação.");
+    return;
   }
+
+  await fetch("/api/chat/send", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "Authorization": `Bearer ${token}`
+    },
+    body: JSON.stringify({
+      provider_id: providerId,
+      client_id: clientId,
+      texto
+    })
+  });
+
+  document.getElementById("chatInput").value = "";
+  carregarMensagens();
 });
 
-// Inicializa o chat
 carregarMensagens();
 
 </script>
