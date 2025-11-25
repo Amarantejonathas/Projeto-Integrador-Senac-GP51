@@ -107,13 +107,20 @@ Para contribuir com o projeto, acesse o repositório oficial no GitHub:
 - **SQLite**
 
 ---
+## Links utéis
+- Video apresentação do YouTube : **https://youtu.be/GMAoBWzgX84**
+- Link para acesso do site do projeto: **http://127.0.0.1:5000/index.html**
 
-## 🔨 Extensões necessarias 
+## 🔨 Extensões necessarias e explicação de uso
 
 - Flask==2.3.3
 - Flask-SQLAlchemy==3.0.3
 - Flask-JWT-Extended==4.4.4
 - Werkzeug==2.3.6
+
+
+1️⃣ execute o arquivo app.py
+2️⃣ Abra o navegador e acesse: http://127.0.0.1:5000/index.html
 
 ---
 
